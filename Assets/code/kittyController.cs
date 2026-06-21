@@ -1,48 +1,49 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterController))]
-public class CatController : MonoBehaviour
+public class BossController : MonoBehaviour
 {
-    public float walkSpeed = 3f;
-    public float runSpeed = 6f;
-    public float gravity = -20f;
-    public float jumpHeight = 1.5f;
+    Vector3 target;
+    float speed = 1.1f;
 
-    private CharacterController controller;
-    private Vector3 velocity;
-
+    // Start is called before the first frame update
     void Start()
     {
-        controller = GetComponent<CharacterController>();
+        SetNewTarget(new Vector3(
+            transform.position.x + 10,
+            transform.position.y,
+            transform.position.z + 10
+        ));
     }
 
+    // Update is called once per frame
     void Update()
     {
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-
-        float speed = Input.GetKey(KeyCode.LeftShift)
-            ? runSpeed
-            : walkSpeed;
-
-        Vector3 move =
-            transform.right * h +
-            transform.forward * v;
-
-        controller.Move(move * speed * Time.deltaTime);
-
-        if (controller.isGrounded)
+        if (Input.GetMouseButtonDown(0) == true)
         {
-            if (velocity.y < 0)
-                velocity.y = -2f;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            RaycastHit hitInfo;
+
+            if (Physics.Raycast(ray.origin, ray.direction, out hitInfo) == true)
             {
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                SetNewTarget(new Vector3(
+                    hitInfo.point.x,
+                    transform.position.y,
+                    hitInfo.point.z
+                ));
             }
         }
 
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        Vector3 direction = target - transform.position;
+
+        transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
+    }
+
+    void SetNewTarget(Vector3 newTarget)
+    {
+        target = newTarget;
+        transform.LookAt(target);
     }
 }
