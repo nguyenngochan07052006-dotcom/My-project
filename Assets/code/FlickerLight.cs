@@ -1,8 +1,8 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FlickerLight : MonoBehaviour
 {
-    Light myLight;
+    private Light myLight;
 
     void Start()
     {
@@ -11,6 +11,6 @@ public class FlickerLight : MonoBehaviour
 
     void Update()
     {
-        myLight.enabled = Mathf.Sin(Time.time * 10) > 0;
+        myLight.enabled = Mathf.Sin(Time.time * 10f) > 0;
     }
 }
