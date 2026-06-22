@@ -1,71 +1,52 @@
 using UnityEngine;
 
-public class AutoSlidingDoor : MonoBehaviour
+public class DoubleDoor : MonoBehaviour
 {
-    [Header("Cửa Trái - Phải")]
     public Transform leftDoor;
     public Transform rightDoor;
 
-    [Header("Cài đặt")]
-    public float slideDistance = 2.2f;     // Khoảng cách trượt sang 2 bên
-    public float slideSpeed = 4f;          // Tốc độ trượt
-    public float closeDelay = 2f;          // Delay trước khi đóng
+    public float openAngle = 90f;
+    public float speed = 2f;
 
-    private Vector3 leftClosedPos;
-    private Vector3 rightClosedPos;
-    private Vector3 leftOpenPos;
-    private Vector3 rightOpenPos;
+    bool isOpen;
 
-    private bool playerNear = false;
-    private float closeTimer = 0f;
+    Quaternion leftClosed;
+    Quaternion rightClosed;
+
+    Quaternion leftOpen;
+    Quaternion rightOpen;
 
     void Start()
     {
-        // Lưu vị trí ban đầu
-        leftClosedPos = leftDoor.localPosition;
-        rightClosedPos = rightDoor.localPosition;
+        leftClosed = leftDoor.localRotation;
+        rightClosed = rightDoor.localRotation;
 
-        // Vị trí khi mở (trượt sang 2 bên)
-        leftOpenPos = leftClosedPos + Vector3.left * slideDistance;
-        rightOpenPos = rightClosedPos + Vector3.right * slideDistance;
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerNear = true;
-            closeTimer = 0;
-        }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerNear = false;
-            closeTimer = closeDelay;
-        }
+        leftOpen = Quaternion.Euler(0, -openAngle, 0) * leftClosed;
+        rightOpen = Quaternion.Euler(0, openAngle, 0) * rightClosed;
     }
 
     void Update()
     {
-        if (playerNear) // Mở cửa
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            leftDoor.localPosition = Vector3.MoveTowards(leftDoor.localPosition, leftOpenPos, slideSpeed * Time.deltaTime);
-            rightDoor.localPosition = Vector3.MoveTowards(rightDoor.localPosition, rightOpenPos, slideSpeed * Time.deltaTime);
+            isOpen = !isOpen;
         }
-        else // Đóng cửa sau delay
+
+        if (isOpen)
         {
-            if (closeTimer > 0)
-            {
-                closeTimer -= Time.deltaTime;
-            }
-            else
-            {
-                leftDoor.localPosition = Vector3.MoveTowards(leftDoor.localPosition, leftClosedPos, slideSpeed * Time.deltaTime);
-                rightDoor.localPosition = Vector3.MoveTowards(rightDoor.localPosition, rightClosedPos, slideSpeed * Time.deltaTime);
-            }
+            leftDoor.localRotation =
+                Quaternion.Lerp(leftDoor.localRotation, leftOpen, Time.deltaTime * speed);
+
+            rightDoor.localRotation =
+                Quaternion.Lerp(rightDoor.localRotation, rightOpen, Time.deltaTime * speed);
+        }
+        else
+        {
+            leftDoor.localRotation =
+                Quaternion.Lerp(leftDoor.localRotation, leftClosed, Time.deltaTime * speed);
+
+            rightDoor.localRotation =
+                Quaternion.Lerp(rightDoor.localRotation, rightClosed, Time.deltaTime * speed);
         }
     }
 }
