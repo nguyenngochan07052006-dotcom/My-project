@@ -2,27 +2,29 @@
 
 public class Door : MonoBehaviour
 {
-    public float openAngle = -90f;
-    public float speed = 2f;
+    [Header("Cài đặt cửa")]
+    public float openAngle = -90f;        // Góc mở cửa
+    public float speed = 3f;              // Tốc độ mở cửa
+    public float openDistance = 3f;       // Khoảng cách tương tác
+    public Transform player;              // Kéo Player vào đây
 
-    public float openDistance = 3f;
-
-    public Transform player;
+    [Header("Âm thanh")]
+    public AudioClip openSound;
+    public AudioClip closeSound;
 
     private bool isOpen = false;
     private bool showText = false;
-
     private Quaternion closedRot;
     private Quaternion openRot;
-
     private AudioSource audioSource;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
 
         closedRot = transform.rotation;
-
         openRot = Quaternion.Euler(
             transform.eulerAngles.x,
             transform.eulerAngles.y + openAngle,
@@ -34,11 +36,9 @@ public class Door : MonoBehaviour
     {
         if (player == null) return;
 
-        float distance = Vector3.Distance(
-            player.position,
-            transform.position
-        );
+        float distance = Vector3.Distance(player.position, transform.position);
 
+        // Kiểm tra khoảng cách
         if (distance <= openDistance)
         {
             showText = true;
@@ -47,9 +47,10 @@ public class Door : MonoBehaviour
             {
                 isOpen = !isOpen;
 
-                // Phát âm thanh khi mở hoặc đóng
+                // Phát âm thanh
                 if (audioSource != null)
                 {
+                    audioSource.clip = isOpen ? openSound : closeSound;
                     audioSource.Play();
                 }
             }
@@ -59,11 +60,11 @@ public class Door : MonoBehaviour
             showText = false;
         }
 
-        Quaternion target = isOpen ? openRot : closedRot;
-
+        // Mở / Đóng cửa mượt mà
+        Quaternion targetRot = isOpen ? openRot : closedRot;
         transform.rotation = Quaternion.Lerp(
             transform.rotation,
-            target,
+            targetRot,
             Time.deltaTime * speed
         );
     }
@@ -72,22 +73,14 @@ public class Door : MonoBehaviour
     {
         if (showText)
         {
-            GUIStyle style = new GUIStyle();
-
-            style.fontSize = 24;
+            GUIStyle style = new GUIStyle(GUI.skin.label);
+            style.fontSize = 28;
             style.normal.textColor = Color.white;
             style.alignment = TextAnchor.MiddleCenter;
+            style.fontStyle = FontStyle.Bold;
 
-            GUI.Label(
-                new Rect(
-                    Screen.width / 2 - 120,
-                    Screen.height - 100,
-                    240,
-                    40
-                ),
-                "Bấm [E] để mở cửa",
-                style
-            );
+            GUI.Label(new Rect(Screen.width / 2 - 150, Screen.height - 120, 300, 50),
+                      "Nhấn [E] để " + (isOpen ? "đóng" : "mở") + " cửa", style);
         }
     }
 }
