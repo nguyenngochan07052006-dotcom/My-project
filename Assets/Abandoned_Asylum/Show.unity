@@ -1114,7 +1114,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0002746582}
+  m_AnchoredPosition: {x: 0, y: 0.00036621094}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &256135173
@@ -1675,7 +1675,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -4092,7 +4092,7 @@ Transform:
   m_GameObject: {fileID: 914709250}
   serializedVersion: 2
   m_LocalRotation: {x: -0.00063815323, y: -0.7013518, z: 0.71281475, w: 0.000648649}
-  m_LocalPosition: {x: 6.416, y: 5.8173, z: -6.85}
+  m_LocalPosition: {x: 6.416, y: 3.5, z: -6.85}
   m_LocalScale: {x: 0.13027565, y: 1, z: 0.114844784}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5335,7 +5335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   openAngle: -90
   speed: 2
-  openDistance: 1
+  openDistance: 5
   player: {fileID: 1047261682}
 --- !u!82 &1101369890
 AudioSource:
@@ -9200,7 +9200,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4459864850019384750, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
       propertyPath: m_Name
-      value: player
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 4459864851310106426, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
       propertyPath: near clip plane
