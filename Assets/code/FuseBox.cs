@@ -2,46 +2,59 @@ using UnityEngine;
 
 public class FuseBox : MonoBehaviour
 {
+    [Header("Sockets & Installed Wires")]
+    // Kéo các Object dây ẩn (_Installed) trong hộp điện vào đây
+    public GameObject wireRedInstalled;  
+    public GameObject wireBlueInstalled; 
+
     [Header("State")]
-    public bool wiresInstalled = false;
+    public bool isRedFixed = false;
+    public bool isBlueFixed = false;
     public bool powerIsOn = false;
 
     [Header("References")]
-    public GameObject redWireVisual;  // Model dây đỏ ẩn sẵn trong hộp điện
-    public GameObject blueWireVisual; // Model dây xanh ẩn sẵn trong hộp điện
-    public Animator leverAnimator;     // Animator để chạy animation gạt cầu dao
-    public GameObject houseLights;     // GameObject cha chứa toàn bộ đèn trong nhà
+    public Animator leverAnimator;     // Cầu dao Main Switch
+    public GameObject houseLights;     // Hệ thống đèn nhà
 
     private void Start()
     {
-        // Ban đầu ẩn dây trong hộp và tắt hết đèn nhà đi cho tối tăm
-        if(redWireVisual) redWireVisual.SetActive(false);
-        if(blueWireVisual) blueWireVisual.SetActive(false);
-        if(houseLights) houseLights.SetActive(false);
+        // Lúc đầu game, ẩn 2 sợi dây trong hộp điện đi
+        if (wireRedInstalled) wireRedInstalled.SetActive(false);
+        if (wireBlueInstalled) wireBlueInstalled.SetActive(false);
+        if (houseLights) houseLights.SetActive(false);
     }
 
-    // Hàm này gọi khi người chơi bấm tương tác (E hoặc Click chuột) vào hộp điện
+    // Hàm xử lý khi người chơi bấm tương tác vào Hộp điện
     public void InteractWithBox(PlayerInventory playerInv)
     {
-        if (!wiresInstalled)
+        // 1. Kiểm tra sửa dây đỏ
+        if (!isRedFixed && playerInv.hasRedWire)
         {
-            // Kiểm tra xem player có đủ 2 dây chưa
-            if (playerInv.hasRedWire && playerInv.hasBlueWire)
-            {
-                wiresInstalled = true;
-                if(redWireVisual) redWireVisual.SetActive(true);
-                if(blueWireVisual) blueWireVisual.SetActive(true);
-                Debug.Log("Đã lắp dây điện thành công!");
-            }
-            else
-            {
-                Debug.Log("Thiếu dây điện để sửa!");
-            }
+            isRedFixed = true;
+            playerInv.hasRedWire = false; // Trừ khỏi kho đồ của player
+            if (wireRedInstalled) wireRedInstalled.SetActive(true); // Hiện dây đỏ trong hộp
+            Debug.Log("Đã nối xong dây điện ĐỎ vào socket!");
+            return; // Thoát ra để tránh chạy logic gạt cần ngay lập tức
         }
-        else if (!powerIsOn)
+
+        // 2. Kiểm tra sửa dây xanh
+        if (!isBlueFixed && playerInv.hasBlueWire)
         {
-            // Nếu đã lắp dây nhưng chưa gạt cầu dao
+            isBlueFixed = true;
+            playerInv.hasBlueWire = false; // Trừ khỏi kho đồ của player
+            if (wireBlueInstalled) wireBlueInstalled.SetActive(true); // Hiện dây xanh trong hộp
+            Debug.Log("Đã nối xong dây điện XANH vào socket!");
+            return;
+        }
+
+        // 3. Nếu đã sửa đủ cả 2 dây nhưng chưa gạt cầu dao
+        if (isRedFixed && isBlueFixed && !powerIsOn)
+        {
             ActivatePower();
+        }
+        else if ((!isRedFixed || !isBlueFixed) && !powerIsOn)
+        {
+            Debug.Log("Hộp điện vẫn thiếu dây, chưa thể gạt cầu dao!");
         }
     }
 
@@ -49,17 +62,14 @@ public class FuseBox : MonoBehaviour
     {
         powerIsOn = true;
         
-        // 1. Chạy hiệu ứng gạt tay cầm xuống (nếu bạn có làm animation cho Main Switch)
-        if (leverAnimator != null)
-        {
-            leverAnimator.SetTrigger("FlipSwitch");
-        }
+        // Chạy animation gạt cần Main Switch
+        if (leverAnimator != null) leverAnimator.SetTrigger("FlipSwitch");
 
-        // 2. Bật toàn bộ đèn trong nhà lên
+        // Bật đèn toàn bộ nhà
         if (houseLights != null)
         {
             houseLights.SetActive(true);
-            Debug.Log("Đèn nhà đã sáng!");
+            Debug.Log("Cầu dao đã gạt! Đèn toàn bộ ngôi nhà đã sáng.");
         }
     }
 }

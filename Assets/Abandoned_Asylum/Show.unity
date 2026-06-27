@@ -2815,10 +2815,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1982d0a2642e44d82c31f230314ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wiresInstalled: 0
+  wireRedInstalled: {fileID: 809914293}
+  wireBlueInstalled: {fileID: 1764634589}
+  isRedFixed: 0
+  isBlueFixed: 0
   powerIsOn: 0
-  redWireVisual: {fileID: 324300406}
-  blueWireVisual: {fileID: 0}
   leverAnimator: {fileID: 0}
   houseLights: {fileID: 179286560}
 --- !u!1 &508266082
@@ -11727,6 +11728,6 @@ SceneRoots:
   - {fileID: 534726616}
   - {fileID: 497778299}
   - {fileID: 324300409}
-  - {fileID: 1439336979}
-  - {fileID: 1764634593}
   - {fileID: 809914297}
+  - {fileID: 1764634593}
+  - {fileID: 1439336979}
