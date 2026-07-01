@@ -1,18 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class SimplePickUp : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public string tenVatPham = "Chìa khóa tủ";   // Đổi tên vật phẩm ở đây
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        
+        if (other.CompareTag("Player"))
+        {
+            SimpleInventory.instance.NhatDo(tenVatPham);
+            Destroy(gameObject);   // Xóa vật phẩm sau khi nhặt
+        }
     }
 }

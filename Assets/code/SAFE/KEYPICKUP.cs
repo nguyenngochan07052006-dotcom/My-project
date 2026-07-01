@@ -7,23 +7,27 @@ public class KeyPickup : MonoBehaviour
     public string keyName = "Chìa khóa tủ";
 
     [Header("UI Prompt")]
-    public TextMeshProUGUI pickupPrompt;     // Kéo Text "Nhấn E để nhặt chìa khóa" vào đây
+    public TextMeshProUGUI pickupPrompt;
 
     [Header("Hiệu ứng")]
-    public GameObject pickupEffect;          // Tùy chọn: hiệu ứng khi nhặt
+    public GameObject pickupEffect;
 
     private bool canPickup = false;
-    private bool isActive = false;           // Kiểm soát chìa khóa đã hiện chưa
+    private bool isActive = true;   // Mặc định là true nếu chìa khóa luôn có thể nhặt
+
+    private void Start()
+    {
+        if (pickupPrompt != null)
+            pickupPrompt.gameObject.SetActive(false);
+    }
 
     void Update()
     {
-        // Hiển thị prompt chỉ khi chìa khóa đã active và player gần
         if (pickupPrompt != null)
         {
             pickupPrompt.gameObject.SetActive(canPickup && isActive);
         }
 
-        // Nhấn E để nhặt
         if (canPickup && isActive && Input.GetKeyDown(KeyCode.E))
         {
             PickupKey();
@@ -50,25 +54,31 @@ public class KeyPickup : MonoBehaviour
     {
         Debug.Log($"Đã nhặt {keyName}!");
 
+        // === PHẦN QUAN TRỌNG: Thêm vào balo ===
+        if (SimpleInventory.instance != null)
+        {
+            SimpleInventory.instance.NhatDo(keyName);
+        }
+        else
+        {
+            Debug.LogError("Không tìm thấy SimpleInventory!");
+        }
+
         if (pickupPrompt != null)
             pickupPrompt.gameObject.SetActive(false);
 
-        // Tạo hiệu ứng nhặt (nếu có)
         if (pickupEffect != null)
         {
             Instantiate(pickupEffect, transform.position, Quaternion.identity);
         }
 
-        // Xóa chìa khóa sau khi nhặt
         Destroy(gameObject);
     }
 
-    // Hàm này được gọi từ script Safe khi mở tủ thành công
+    // Nếu bạn muốn chìa khóa xuất hiện sau khi làm nhiệm vụ nào đó
     public void ActivateKey()
     {
         isActive = true;
         gameObject.SetActive(true);
-
-        Debug.Log("Chìa khóa đã sẵn sàng để nhặt!");
     }
 }

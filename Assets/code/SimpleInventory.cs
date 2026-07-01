@@ -21,7 +21,8 @@ public class SimpleInventory : MonoBehaviour
 
     void Start()
     {
-        baloPanel.SetActive(false);
+        if (baloPanel != null)
+            baloPanel.SetActive(false);
     }
 
     void Update()
@@ -32,21 +33,20 @@ public class SimpleInventory : MonoBehaviour
         }
     }
 
-    // Hàm nhặt đồ - quan trọng nhất
+    // Hàm nhặt đồ
     public void NhatDo(string tenMonDo)
     {
         tuiDo.Add(tenMonDo);
-        Debug.Log($"Đã nhặt: {tenMonDo} | Tổng: {tuiDo.Count} vật phẩm");
+        Debug.Log("Đã nhặt: " + tenMonDo);
 
-        // Nếu balo đang mở thì cập nhật ngay lập tức
-        if (baloPanel.activeSelf)
-        {
+        if (baloPanel != null && baloPanel.activeSelf)
             CapNhatChuBalo();
-        }
     }
 
     void ToggleBalo()
     {
+        if (baloPanel == null) return;
+
         bool trangThaiMoi = !baloPanel.activeSelf;
         baloPanel.SetActive(trangThaiMoi);
 
@@ -54,19 +54,20 @@ public class SimpleInventory : MonoBehaviour
             CapNhatChuBalo();
     }
 
-    // Cập nhật danh sách vật phẩm
     void CapNhatChuBalo()
     {
+        if (txtDanhSachDo == null) return;
+
         if (tuiDo.Count == 0)
         {
             txtDanhSachDo.text = "Balo của bạn đang trống rỗng!";
             return;
         }
 
-        string noiDung = "BALO CỦA BẠN GỒM CÓ:\n\n";
+        string noiDung = "BALO CỦA BẠN:\n\n";
         foreach (string monDo in tuiDo)
         {
-            noiDung += $"• {monDo}\n";
+            noiDung += "• " + monDo + "\n";
         }
 
         txtDanhSachDo.text = noiDung;
